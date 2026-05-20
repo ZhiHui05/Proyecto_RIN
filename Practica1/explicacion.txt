@@ -1,0 +1,4 @@
+un programa pytnon / c abre el puerto serie com y envia mensaje por allí que se conecta por los pines 17 18 por el usb ttl al esp32
+La esp32 recibe los mensajes que le llega por los pines 17 18, cables q utilizamos el verde y blanco
+
+Después de tener esto ya hecho 
