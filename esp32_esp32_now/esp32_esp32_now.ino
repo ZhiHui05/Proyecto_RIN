@@ -4,11 +4,15 @@
 
 #define DHTPIN 4
 #define DHTTYPE DHT11
-#define HW038_PIN 34
+#define HW038_PIN 35
 
 // Credenciales WiFi
-const char* ssid = "MIWIFI_2G_nyEG";
-const char* password = "jUbaZ9Vy";
+//const char* ssid = "MIWIFI_2G_nyEG";
+//const char* password = "jUbaZ9Vy";
+
+const char* ssid = "UPV-PSK";               // SSID de la red WiFi
+const char* password = "C0n3ct4nd0s3_m0l4!";  // Contraseña de la red WiFi
+
 const char* receiverIP = "192.168.1.132";  // <-- CAMBIAR IP DEL RECEPTOR
 const uint16_t serverPort = 5000;
 

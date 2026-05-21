@@ -7,8 +7,12 @@
 // Credenciales WiFi y MQTT
 //const char* ssid = "iPhone de ZhiHui";
 //const char* password = "ZhiHuiLi2005";
-const char* ssid = "MIWIFI_2G_nyEG";
-const char* password = "jUbaZ9Vy";
+//const char* ssid = "MIWIFI_2G_nyEG";
+//const char* password = "jUbaZ9Vy";
+
+const char* ssid = "UPV-PSK";               // SSID de la red WiFi
+const char* password = "C0n3ct4nd0s3_m0l4!";  // Contraseña de la red WiFi
+
 const char* mqtt_server = "broker.mqtt-dashboard.com";
 
 WiFiClient espClient;
