@@ -52,57 +52,86 @@ def on_message(client, userdata, msg):
     data = json.loads(payload)
 
     # -----------------------------------
-    # SENSOR DHT11
+    # ZONA FERMENTACIÓN
     # -----------------------------------
 
-    # Revisa si el mensaje vino del tema (topic) del sensor DHT11
-    if topic == "sensores/dht11":
+    # Revisa si el mensaje vino del tema (topic) de la zona de fermentación
+    if topic == "zonas/fermentacion":
 
         # Extrae los valores del diccionario
         temperatura = data["temperatura"]
         humedad = data["humedad"]
-        estado = data["estado"]
+        co2 = data["co2"]
 
-        # Ejecuta código SQL para insertar (guardar) los datos en la tabla 'sensordht11'
+        # Ejecuta código SQL para insertar (guardar) los datos en la tabla 'zona_fermentacion'
         cursor.execute(
             """
-            INSERT INTO sensordht11
-            (temperatura, humedad, estado)
+            INSERT INTO zona_fermentacion
+            (temperatura, humedad, co2)
             VALUES (%s, %s, %s)
             """,
-            (temperatura, humedad, estado)
+            (temperatura, humedad, co2)
         )
 
         # Confirma (aplica) los cambios en la base de datos
         conexion.commit()
 
-        print("DHT11 guardado")
+        print("Zona Fermentación guardada")
 
     # -----------------------------------
-    # SENSOR HW-038
+    # ZONA HORNEADO
     # -----------------------------------
 
-    # Revisa si el mensaje vino del tema (topic) del sensor HW-038
-    elif topic == "sensores/hw038":
+    # Revisa si el mensaje vino del tema (topic) de la zona de horneado
+    elif topic == "zonas/horneado":
 
         # Extrae los valores del diccionario
-        nivel = data["nivel"]
-        valor_analogico = data["valor_analogico"]
+        temperatura = data["temperatura"]
+        flujo_aire = data["flujo_aire"]
 
-        # Ejecuta código SQL para insertar los datos en la tabla 'sensor_hw038'
+        # Ejecuta código SQL para insertar los datos en la tabla 'zona_horneado'
         cursor.execute(
             """
-            INSERT INTO sensor_hw038
-            (nivel, valor_analogico)
+            INSERT INTO zona_horneado
+            (temperatura, flujo_aire)
             VALUES (%s, %s)
             """,
-            (nivel, valor_analogico)
+            (temperatura, flujo_aire)
         )
 
         # Confirma (aplica) los cambios en la base de datos
         conexion.commit()
 
-        print("HW038 guardado")
+        print("Zona Horneado guardada")
+
+    # -----------------------------------
+    # ZONA MATERIAS PRIMAS
+    # -----------------------------------
+
+    # Revisa si el mensaje vino del tema (topic) de la zona de materias primas
+    elif topic == "zonas/materias":
+
+        # Extrae los valores del diccionario
+        temperatura = data["temperatura"]
+        humedad = data["humedad"]
+        luminosidad = data["luminosidad"]
+        nivel_agua = data["nivel_agua"]
+        valor_analogico_agua = data["valor_analogico_agua"]
+
+        # Ejecuta código SQL para insertar los datos en la tabla 'zona_materias_primas'
+        cursor.execute(
+            """
+            INSERT INTO zona_materias_primas
+            (temperatura, humedad, luminosidad, nivel_agua, valor_analogico_agua)
+            VALUES (%s, %s, %s, %s, %s)
+            """,
+            (temperatura, humedad, luminosidad, nivel_agua, valor_analogico_agua)
+        )
+
+        # Confirma (aplica) los cambios en la base de datos
+        conexion.commit()
+
+        print("Zona Materias Primas guardada")
 
 # -----------------------------------
 # MQTT CLIENTE
@@ -114,12 +143,13 @@ cliente = mqtt.Client()
 # Le indicamos al cliente MQTT qué función usar cuando reciba un mensaje
 cliente.on_message = on_message
 
-# Nos conectamos al 'broker' MQTT que corre en la misma computadora (localhost) en el puerto por defecto (1883)
-cliente.connect("localhost", 1883, 60)
+# Nos conectamos al 'broker' MQTT externo
+cliente.connect("broker.mqtt-dashboard.com", 1883, 60)
 
 # Nos suscribimos a los temas (topics) específicos en los cuales van a publicar los ESP32
-cliente.subscribe("sensores/dht11")
-cliente.subscribe("sensores/hw038")
+cliente.subscribe("zonas/fermentacion")
+cliente.subscribe("zonas/horneado")
+cliente.subscribe("zonas/materias")
 
 print("Esperando mensajes MQTT...")
 
