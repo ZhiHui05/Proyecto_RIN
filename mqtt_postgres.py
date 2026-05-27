@@ -52,11 +52,11 @@ def on_message(client, userdata, msg):
     data = json.loads(payload)
 
     # -----------------------------------
-    # ZONA FERMENTACIÓN
+    # SENSORES FERMENTACIÓN
     # -----------------------------------
 
-    # Revisa si el mensaje vino del tema (topic) de la zona de fermentación
-    if topic == "zonas/fermentacion":
+    # Revisa si el mensaje vino del tema (topic) de sensores de fermentación
+    if topic == "sensores/fermentation":
 
         # Extrae los valores del diccionario
         temperatura = data["temperatura"]
@@ -79,11 +79,11 @@ def on_message(client, userdata, msg):
         print("Zona Fermentación guardada")
 
     # -----------------------------------
-    # ZONA HORNEADO
+    # SENSORES HORNEADO
     # -----------------------------------
 
-    # Revisa si el mensaje vino del tema (topic) de la zona de horneado
-    elif topic == "zonas/horneado":
+    # Revisa si el mensaje vino del tema (topic) de sensores de horneado
+    elif topic == "sensores/baking":
 
         # Extrae los valores del diccionario
         temperatura = data["temperatura"]
@@ -105,33 +105,33 @@ def on_message(client, userdata, msg):
         print("Zona Horneado guardada")
 
     # -----------------------------------
-    # ZONA MATERIAS PRIMAS
+    # SENSORES RAW MATERIALS
     # -----------------------------------
 
-    # Revisa si el mensaje vino del tema (topic) de la zona de materias primas
-    elif topic == "zonas/materias":
+    # Revisa si el mensaje vino del tema (topic) de sensores de raw materials
+    elif topic == "sensores/raw_materials":
 
-        # Extrae los valores del diccionario
+        # Extrae los valores del diccionario que publica el Arduino
         temperatura = data["temperatura"]
         humedad = data["humedad"]
-        luminosidad = data["luminosidad"]
+        luminosidad = data["ldr"]  # El Arduino publica "ldr" que corresponde a luminosidad
         nivel_agua = data["nivel_agua"]
-        valor_analogico_agua = data["valor_analogico_agua"]
 
         # Ejecuta código SQL para insertar los datos en la tabla 'zona_materias_primas'
+        # Nota: valor_analogico_agua se deja como NULL ya que el Arduino no lo publica por separado
         cursor.execute(
             """
             INSERT INTO zona_materias_primas
             (temperatura, humedad, luminosidad, nivel_agua, valor_analogico_agua)
             VALUES (%s, %s, %s, %s, %s)
             """,
-            (temperatura, humedad, luminosidad, nivel_agua, valor_analogico_agua)
+            (temperatura, humedad, luminosidad, nivel_agua, None)
         )
 
         # Confirma (aplica) los cambios en la base de datos
         conexion.commit()
 
-        print("Zona Materias Primas guardada")
+        print("Sensores Raw Materials guardados en Zona Materias Primas")
 
 # -----------------------------------
 # MQTT CLIENTE
@@ -147,9 +147,9 @@ cliente.on_message = on_message
 cliente.connect("broker.mqtt-dashboard.com", 1883, 60)
 
 # Nos suscribimos a los temas (topics) específicos en los cuales van a publicar los ESP32
-cliente.subscribe("zonas/fermentacion")
-cliente.subscribe("zonas/horneado")
-cliente.subscribe("zonas/materias")
+cliente.subscribe("sensores/fermentation")
+cliente.subscribe("sensores/baking")
+cliente.subscribe("sensores/raw_materials")
 
 print("Esperando mensajes MQTT...")
 
